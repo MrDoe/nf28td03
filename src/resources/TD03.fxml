@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="526.0" prefWidth="605.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="controller.Controller">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="526.0" prefWidth="605.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.0" minWidth="1.0" prefWidth="1.0" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="10.0" prefWidth="542.0" />
@@ -29,8 +29,8 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
-                  <TextField fx:id="lastname" layoutX="14.0" layoutY="25.0" prefHeight="25.0" prefWidth="232.0" />
-                  <TextField fx:id="firstname" layoutX="270.0" layoutY="25.0" prefHeight="25.0" prefWidth="232.0" />
+                  <TextField fx:id="firstname" layoutX="14.0" layoutY="25.0" prefHeight="25.0" prefWidth="232.0" />
+                  <TextField fx:id="lastname" layoutX="270.0" layoutY="25.0" prefHeight="25.0" prefWidth="232.0" />
                </children>
             </AnchorPane>
         </content>
@@ -96,8 +96,11 @@
                   <Label text="Date de naissance :  " GridPane.halignment="RIGHT" />
                   <Label text="Sexe :  " GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                   <DatePicker fx:id="birthdate" GridPane.columnIndex="1" />
-                  <RadioButton fx:id="genderF" mnemonicParsing="false" prefHeight="17.0" prefWidth="50.0" text="F" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <RadioButton fx:id="genderM" mnemonicParsing="false" prefHeight="17.0" prefWidth="124.0" text="M" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                  <RadioButton fx:id="genderF" mnemonicParsing="false" prefHeight="17.0" prefWidth="50.0" selected="true" text="F" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="genderRadioGroup" />
+                     </toggleGroup></RadioButton>
+                  <RadioButton fx:id="genderM" mnemonicParsing="false" prefHeight="17.0" prefWidth="124.0" text="M" toggleGroup="$genderRadioGroup" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </content>
@@ -113,5 +116,7 @@
       </TitledPane>
       <Button fx:id="save" mnemonicParsing="false" text="Sauvegarder" GridPane.columnIndex="1" GridPane.rowIndex="5" />
       <Label text="TD03 - Formulaire de contact" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+      <Button fx:id="load" mnemonicParsing="false" text="Load" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+      <Button fx:id="debug" mnemonicParsing="false" text="Debug" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
    </children>
 </GridPane>

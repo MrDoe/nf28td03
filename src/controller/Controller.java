@@ -7,6 +7,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import model.Contact;
 import model.Country;
 import model.Group;
@@ -50,6 +51,17 @@ public class Controller {
 	    @FXML
 	    private TextField lastname;		
 		
+	    @FXML
+	    private Button load;
+
+	    @FXML
+	    private ToggleGroup genderRadioGroup;
+	    
+
+	    @FXML
+	    private Button debug;
+	    
+	    
 		public Controller(){
 			this.model = new Contact();
 			initViewValues();
@@ -59,24 +71,56 @@ public class Controller {
 			groupsData.addAll(Group.getGroups());
 			
 			countriesData.addAll(Country.getCountries());
-//			Country countryTest = new Country();
-//			countryTest.nameProperty().setValue("TOTO");
-//			countriesData.add(countryTest);
-//			for(Country countryItem : Country.getCountries()){
-//				
-//			}
+			
 			
 		}
 		
 
 		@FXML
 		public void initialize() {
-			save.setOnAction((event) -> {
-				System.out.println("save button action");
-			});
 			
 			country.setItems(countriesData);
 			groups.setItems(groupsData);
+
+			genderF.setUserData("F");
+			genderM.setUserData("M");
+			
+			lastname.textProperty().bindBidirectional(model.lastnameProperty());
+			firstname.textProperty().bindBidirectional(model.firstnameProperty());
+			street.textProperty().bindBidirectional(model.addressProperty().getValue().streetProperty());
+			city.textProperty().bindBidirectional(model.addressProperty().getValue().cityProperty());
+			country.valueProperty().bindBidirectional(model.addressProperty().getValue().countryProperty());
+			birthdate.valueProperty().bindBidirectional(model.birthdateProperty());
+			
+			genderRadioGroup.selectedToggleProperty().addListener(
+				(event, oldValue, newValue) -> {
+					model.genderProperty().setValue(newValue.getUserData().toString());
+				}
+			);
+			
+			model.genderProperty().addListener(
+				(event, oldValue, newValue) -> {
+					if(newValue.equals("M"))
+						genderRadioGroup.selectToggle(genderM);
+					else
+						genderRadioGroup.selectToggle(genderF);
+				}
+			);
+			
+			groups.valueProperty().bindBidirectional(model.groupProperty());
+			
+			save.setOnAction((event) -> {
+				model.validate();
+			});
+			
+			debug.setOnAction((event) -> {
+				model.debug();
+			});
+			
+			load.setOnAction((event) -> {
+				System.out.println("save button action");
+			});
+			
 		}
 		
 }
