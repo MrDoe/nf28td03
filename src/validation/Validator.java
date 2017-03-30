@@ -2,6 +2,8 @@ package validation;
 
 import java.util.ArrayList;
 
+import constraints.AbstractConstraint;
+
 public class Validator<T> {
 	private ArrayList<AbstractConstraint<T>> constraints;
 	

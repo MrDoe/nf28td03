@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import constraints.AbstractConstraint;
+import constraints.BirthdateConstraint;
+import constraints.NotEmptyStringConstraint;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import validation.AbstractConstraint;
-import validation.BirthdateConstraint;
-import validation.NotEmptyStringConstraint;
 import validation.Validator;
 
 public class Contact {
@@ -36,6 +36,9 @@ public class Contact {
 		vFirstName.addConstraint(new NotEmptyStringConstraint(firstname));
 		validators.put(firstname, vFirstName);
 		
+		Validator<ObjectProperty<LocalDate>> vBirthDate = new Validator<>();
+		vBirthDate.addConstraint(new BirthdateConstraint(birthdate));
+		validators.put(birthdate, vBirthDate);
 //		validators.put(firstname, new ArrayList<>());
 //		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
 //		validators.put(lastname, new ArrayList<>());
@@ -84,9 +87,9 @@ public class Contact {
 		System.out.println("birthdate : "+ birthdate);
 		System.out.println("gender : " + gender);
 		System.out.println("group : " +  group);
-		System.out.println("----------- BEGIN test part ---------------");
-		
-		System.out.println("----------- END test part ---------------");
+//		System.out.println("----------- BEGIN test part ---------------");
+//		
+//		System.out.println("----------- END test part ---------------");
 	}
 	
 	public void load(){
@@ -109,14 +112,18 @@ public class Contact {
 		// Groupes ??
 	}
 	
-	public void validate(){
+	public boolean isValid(){
+		boolean isValid = true;
 		for(Validator<?> validator : validators.values()){
 			if(!validator.validate()){
+				isValid = false;
+				// Gérer les messages (ici print pour debug)
 				for (String message : validator.getMessages()) {
 					System.out.println(message);
 				}
 			}
 		}
+		return isValid;
 	}
 
 }

@@ -108,7 +108,8 @@ public class Controller {
 			groups.valueProperty().bindBidirectional(model.groupProperty());
 			
 			save.setOnAction((event) -> {
-				model.validate();
+				if(model.isValid())
+					System.out.println("Les données sont valides et prêtes à être enregistrées.");
 			});
 			
 			debug.setOnAction((event) -> {

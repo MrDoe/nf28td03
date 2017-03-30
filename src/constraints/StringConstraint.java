@@ -1,4 +1,4 @@
-package validation;
+package constraints;
 
 import javafx.beans.property.StringProperty;
 

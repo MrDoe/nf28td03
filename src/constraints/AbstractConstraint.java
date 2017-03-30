@@ -1,4 +1,4 @@
-package validation;
+package constraints;
 
 public abstract class AbstractConstraint<T> {
 	private boolean isValid = false;
