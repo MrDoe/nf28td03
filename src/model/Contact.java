@@ -3,9 +3,6 @@ package model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -14,6 +11,7 @@ import javafx.beans.property.StringProperty;
 import validation.AbstractConstraint;
 import validation.BirthdateConstraint;
 import validation.NotEmptyStringConstraint;
+import validation.Validator;
 
 public class Contact {
 	private StringProperty lastname;
@@ -23,7 +21,7 @@ public class Contact {
 	private StringProperty gender;
 	private ObjectProperty<Group> group;
 	
-	private HashMap<Object, ArrayList<AbstractConstraint<?>>> validators;
+	private HashMap<Object, Validator<?>> validators;
 	
 	public Contact(){
 		lastname = new SimpleStringProperty();
@@ -34,12 +32,16 @@ public class Contact {
 		group = new SimpleObjectProperty<Group>();
 		
 		validators = new HashMap<>();
-		validators.put(firstname, new ArrayList<>());
-		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
-		validators.put(lastname, new ArrayList<>());
-		validators.get(lastname).add(new NotEmptyStringConstraint(lastname));
-		validators.put(birthdate, new ArrayList<>());
-		validators.get(birthdate).add(new BirthdateConstraint(birthdate));
+		Validator<StringProperty> vFirstName = new Validator<>();
+		vFirstName.addConstraint(new NotEmptyStringConstraint(firstname));
+		validators.put(firstname, vFirstName);
+		
+//		validators.put(firstname, new ArrayList<>());
+//		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
+//		validators.put(lastname, new ArrayList<>());
+//		validators.get(lastname).add(new NotEmptyStringConstraint(lastname));
+//		validators.put(birthdate, new ArrayList<>());
+//		validators.get(birthdate).add(new BirthdateConstraint(birthdate));
 		
 		
 		
@@ -108,12 +110,12 @@ public class Contact {
 	}
 	
 	public void validate(){
-		for(ArrayList<AbstractConstraint<?>> list : validators.values()){
-			for (AbstractConstraint<?> abstractValidator : list) {
-				if(!abstractValidator.validate()){
-					System.out.println(abstractValidator.getMessage());
+		for(Validator<?> validator : validators.values()){
+			if(!validator.validate()){
+				for (String message : validator.getMessages()) {
+					System.out.println(message);
 				}
-			}			
+			}
 		}
 	}
 
