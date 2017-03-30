@@ -1,11 +1,19 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import validation.AbstractConstraint;
+import validation.BirthdateConstraint;
+import validation.NotEmptyStringConstraint;
 
 public class Contact {
 	private StringProperty lastname;
@@ -15,14 +23,30 @@ public class Contact {
 	private StringProperty gender;
 	private ObjectProperty<Group> group;
 	
+	private HashMap<Object, ArrayList<AbstractConstraint<?>>> validators;
+	
 	public Contact(){
 		lastname = new SimpleStringProperty();
 		firstname = new SimpleStringProperty();
-//		Address 
 		address = new SimpleObjectProperty<Address>(new Address());
 		birthdate = new SimpleObjectProperty<LocalDate>();
 		gender = new SimpleStringProperty();
 		group = new SimpleObjectProperty<Group>();
+		
+		validators = new HashMap<>();
+		validators.put(firstname, new ArrayList<>());
+		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
+		validators.put(lastname, new ArrayList<>());
+		validators.get(lastname).add(new NotEmptyStringConstraint(lastname));
+		validators.put(birthdate, new ArrayList<>());
+		validators.get(birthdate).add(new BirthdateConstraint(birthdate));
+		
+		
+		
+//		validators = new ArrayList<>();
+//		validators.add(new NotEmptyStringValidator(lastname));
+//		validators.add(new NotEmptyStringValidator(firstname));
+//		validators.add(new BirthdateValidator(birthdate));
 	}
 	
 	public StringProperty lastnameProperty(){
@@ -58,14 +82,39 @@ public class Contact {
 		System.out.println("birthdate : "+ birthdate);
 		System.out.println("gender : " + gender);
 		System.out.println("group : " +  group);
+		System.out.println("----------- BEGIN test part ---------------");
+		
+		System.out.println("----------- END test part ---------------");
 	}
 	
 	public void load(){
+		// sample data : 
+		firstname.setValue("Nicolas");
+		lastname.setValue("Rigaud");
+		Address address = this.address.get();
+		address.streetProperty().setValue("28 quater rue d'Amiens Apt 5C");
+		address.postalCodeProperty().setValue("60200");
+		address.cityProperty().setValue("Compiègne");
+//		
+//		Country c = new Country();
+//		c.nameProperty().set("France");
+//		address.countryProperty().set(c);
+//		
+
+		birthdate.set(LocalDate.of(1993, 3, 15));
+		gender.set("M");
 		
+		// Groupes ??
 	}
 	
 	public void validate(){
-		
+		for(ArrayList<AbstractConstraint<?>> list : validators.values()){
+			for (AbstractConstraint<?> abstractValidator : list) {
+				if(!abstractValidator.validate()){
+					System.out.println(abstractValidator.getMessage());
+				}
+			}			
+		}
 	}
 
 }

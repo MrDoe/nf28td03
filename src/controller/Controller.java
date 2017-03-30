@@ -64,15 +64,12 @@ public class Controller {
 	    
 		public Controller(){
 			this.model = new Contact();
-			initViewValues();
+			initData();
 		}
 		
-		private void initViewValues(){
+		private void initData(){
 			groupsData.addAll(Group.getGroups());
-			
 			countriesData.addAll(Country.getCountries());
-			
-			
 		}
 		
 
@@ -87,9 +84,10 @@ public class Controller {
 			
 			lastname.textProperty().bindBidirectional(model.lastnameProperty());
 			firstname.textProperty().bindBidirectional(model.firstnameProperty());
-			street.textProperty().bindBidirectional(model.addressProperty().getValue().streetProperty());
-			city.textProperty().bindBidirectional(model.addressProperty().getValue().cityProperty());
-			country.valueProperty().bindBidirectional(model.addressProperty().getValue().countryProperty());
+			street.textProperty().bindBidirectional(model.addressProperty().get().streetProperty());
+			postalCode.textProperty().bindBidirectional(model.addressProperty().get().postalCodeProperty());
+			city.textProperty().bindBidirectional(model.addressProperty().get().cityProperty());
+			country.valueProperty().bindBidirectional(model.addressProperty().get().countryProperty()); // Not working ??
 			birthdate.valueProperty().bindBidirectional(model.birthdateProperty());
 			
 			genderRadioGroup.selectedToggleProperty().addListener(
@@ -118,7 +116,7 @@ public class Controller {
 			});
 			
 			load.setOnAction((event) -> {
-				System.out.println("save button action");
+				model.load();
 			});
 			
 		}
