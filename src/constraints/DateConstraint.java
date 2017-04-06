@@ -6,8 +6,8 @@ import javafx.beans.property.ObjectProperty;
 
 public abstract class DateConstraint extends AbstractConstraint<ObjectProperty<LocalDate>> {
 
-	public DateConstraint(ObjectProperty<LocalDate> value) {
-		super(value);
+	public DateConstraint() {
+		super();
 		// TODO Auto-generated constructor stub
 	}
 }

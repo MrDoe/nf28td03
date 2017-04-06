@@ -21,24 +21,26 @@ public class Contact {
 	private StringProperty gender;
 	private ObjectProperty<Group> group;
 	
-	private HashMap<Object, Validator<?>> validators;
+	private ArrayList<Validator<?>> validators;
 	
 	public Contact(){
-		lastname = new SimpleStringProperty();
-		firstname = new SimpleStringProperty();
-		address = new SimpleObjectProperty<Address>(new Address());
-		birthdate = new SimpleObjectProperty<LocalDate>();
-		gender = new SimpleStringProperty();
-		group = new SimpleObjectProperty<Group>();
+		lastname = new SimpleStringProperty(null, "lastname");
+		firstname = new SimpleStringProperty(null, "firstname");
+		address = new SimpleObjectProperty<Address>(null, "address", new Address());
+		birthdate = new SimpleObjectProperty<LocalDate>(null, "birthdate");
+		gender = new SimpleStringProperty(null, "gender");
+		group = new SimpleObjectProperty<Group>(null,"group",new Group());
 		
-		validators = new HashMap<>();
-		Validator<StringProperty> vFirstName = new Validator<>();
-		vFirstName.addConstraint(new NotEmptyStringConstraint(firstname));
-		validators.put(firstname, vFirstName);
+		validators = new ArrayList<>();
 		
-		Validator<ObjectProperty<LocalDate>> vBirthDate = new Validator<>();
-		vBirthDate.addConstraint(new BirthdateConstraint(birthdate));
-		validators.put(birthdate, vBirthDate);
+		
+		Validator<StringProperty> vFirstName = new Validator<>(firstname.getName(), firstname);
+		vFirstName.addConstraint(new NotEmptyStringConstraint());
+		validators.add(vFirstName);
+		
+		Validator<ObjectProperty<LocalDate>> vBirthDate = new Validator<>(birthdate.getName(), birthdate);
+		vBirthDate.addConstraint(new BirthdateConstraint());
+		validators.add(vBirthDate);
 //		validators.put(firstname, new ArrayList<>());
 //		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
 //		validators.put(lastname, new ArrayList<>());
@@ -101,29 +103,33 @@ public class Contact {
 		address.postalCodeProperty().setValue("60200");
 		address.cityProperty().setValue("Compiègne");
 //		
-//		Country c = new Country();
-//		c.nameProperty().set("France");
-//		address.countryProperty().set(c);
+		Country c = new Country();
+		c.nameProperty().set("France");
+		address.countryProperty().set(c);
+		
 //		
 
 		birthdate.set(LocalDate.of(1993, 3, 15));
 		gender.set("M");
 		
 		// Groupes ??
+		Group g = new Group();
+		g.nameProperty().set("Groupe 1");
+		group.set(g);
 	}
 	
 	public boolean isValid(){
 		boolean isValid = true;
-		for(Validator<?> validator : validators.values()){
+		for(Validator<?> validator : validators){
 			if(!validator.validate()){
 				isValid = false;
 				// Gérer les messages (ici print pour debug)
-				for (String message : validator.getMessages()) {
-					System.out.println(message);
-				}
 			}
 		}
 		return isValid;
 	}
-
+	
+	public ArrayList<Validator<?>> getValidators(){
+		return this.validators;
+	}
 }

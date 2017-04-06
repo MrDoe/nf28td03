@@ -96,7 +96,7 @@
                   <Label text="Date de naissance :  " GridPane.halignment="RIGHT" />
                   <Label text="Sexe :  " GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                   <DatePicker fx:id="birthdate" GridPane.columnIndex="1" />
-                  <RadioButton fx:id="genderF" mnemonicParsing="false" prefHeight="17.0" prefWidth="50.0" selected="true" text="F" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <RadioButton fx:id="genderF" mnemonicParsing="false" prefHeight="17.0" prefWidth="50.0" text="F" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <toggleGroup>
                         <ToggleGroup fx:id="genderRadioGroup" />
                      </toggleGroup></RadioButton>

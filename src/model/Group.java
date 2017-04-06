@@ -39,4 +39,19 @@ public class Group {
 	public String toString(){
 		return name.getValue();
 	}
+	public Object getId(){
+		return name.getValueSafe();
+	}
+	
+	
+	@Override
+	public boolean equals(Object group){
+		if(group instanceof Group)
+		{
+			if(((Group) group).getId().equals(this.getId()))
+				return true;
+		}		
+		return false;
+	}
+	
 }

@@ -35,4 +35,19 @@ public class Country {
 	public String toString(){
 		return name.getValue();
 	}
+	
+	public Object getId(){
+		return name.getValueSafe();
+	}
+	
+	
+	@Override
+	public boolean equals(Object country){
+		if(country instanceof Country)
+		{
+			if(((Country) country).getId().equals(this.getId()))
+				return true;
+		}		
+		return false;
+	}
 }

@@ -5,12 +5,17 @@ public abstract class AbstractConstraint<T> {
 	private String message;
 	protected T value;
 	
-	public AbstractConstraint(T value){
+	public AbstractConstraint(){
+		
+	}
+//	public AbstractConstraint(T value){
+//		setObject(value);
+//	}
+	public void setObject(T value){
 		if(value == null)
 			throw new NullPointerException("Validator must be initialized with an instanciated object.");
 		this.value = value;
 	}
-
 	public String getMessage() {
 		return message;
 	}

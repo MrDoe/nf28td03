@@ -3,11 +3,11 @@ package constraints;
 import javafx.beans.property.StringProperty;
 
 public class NotEmptyStringConstraint extends StringConstraint {
-	public final static String EMPTY_STRING = "Cette valeur doit être renseignée.";
-	public NotEmptyStringConstraint(StringProperty p) {
-		super(p);
-		// TODO Auto-generated constructor stub
+	public NotEmptyStringConstraint() {
+		super();
 	}
+
+	public final static String EMPTY_STRING = "Cette valeur doit être renseignée.";
 
 	@Override
 	public boolean validate() {
