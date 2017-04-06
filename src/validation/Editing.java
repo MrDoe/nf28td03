@@ -1,9 +1,7 @@
-package model;
+package validation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import validation.Validator;
 
 public class Editing<T extends Editable> {
 	private T object;

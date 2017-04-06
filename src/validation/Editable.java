@@ -1,4 +1,4 @@
-package model;
+package validation;
 
 public interface Editable {
 	public void debug();
