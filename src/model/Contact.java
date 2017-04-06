@@ -1,17 +1,13 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 
-import constraints.BirthdateConstraint;
-import constraints.NotEmptyStringConstraint;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import validation.Validator;
 
-public class Contact {
+public class Contact implements Editable{
 	private StringProperty lastname;
 	private StringProperty firstname;
 	private ObjectProperty<Address> address;
@@ -19,7 +15,6 @@ public class Contact {
 	private StringProperty gender;
 	private ObjectProperty<Group> group;
 
-	private ArrayList<Validator<?>> validators;
 
 	public Contact(){
 		lastname = new SimpleStringProperty(null, "lastname");
@@ -29,16 +24,6 @@ public class Contact {
 		gender = new SimpleStringProperty(null, "gender");
 		group = new SimpleObjectProperty<Group>(null,"group",new Group());
 
-		validators = new ArrayList<>();
-
-
-		Validator<StringProperty> vFirstName = new Validator<>(firstname.getName(), firstname);
-		vFirstName.addConstraint(new NotEmptyStringConstraint());
-		validators.add(vFirstName);
-
-		Validator<ObjectProperty<LocalDate>> vBirthDate = new Validator<>(birthdate.getName(), birthdate);
-		vBirthDate.addConstraint(new BirthdateConstraint());
-		validators.add(vBirthDate);
 //		validators.put(firstname, new ArrayList<>());
 //		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
 //		validators.put(lastname, new ArrayList<>());
@@ -116,18 +101,10 @@ public class Contact {
 		group.set(g);
 	}
 
-	public boolean isValid(){
-		boolean isValid = true;
-		for(Validator<?> validator : validators){
-			if(!validator.validate()){
-				isValid = false;
-				// G�rer les messages (ici print pour debug)
-			}
-		}
-		return isValid;
+	@Override
+	public void reset() {
+		System.out.println("TODO : reset values");
+
 	}
 
-	public ArrayList<Validator<?>> getValidators(){
-		return this.validators;
-	}
 }

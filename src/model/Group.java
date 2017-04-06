@@ -25,6 +25,18 @@ public class Group {
 		return name;
 	}
 
+	public void addContact(Contact c){
+		if(c == null)
+			throw new NullPointerException();
+		this.contacts.add(c);
+	}
+
+	public void removeContact(Contact c){
+		if(c == null)
+			throw new NullPointerException();
+		this.contacts.remove(c);
+	}
+
 	public static List<Group> getGroups(){
 		ArrayList<Group> groupList = new ArrayList<>();
 		Group group;

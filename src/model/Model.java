@@ -13,6 +13,17 @@ public class Model {
 	public ObservableList<Group> groupsProperty(){
 		return this.groups;
 	}
+	public void addGroup(Group g){
+		if(g==null)
+			throw new NullPointerException();
+		this.groups.add(g);
+	}
+
+	public void removeGroup(Group g){
+		if(g==null)
+			throw new NullPointerException();
+		this.groups.remove(g);
+	}
 
 
 }

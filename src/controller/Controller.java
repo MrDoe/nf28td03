@@ -17,12 +17,13 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import model.Contact;
 import model.Country;
+import model.Editing;
 import model.Group;
 import model.Model;
 import validation.Validator;
 
 public class Controller {
-		private Contact editingContact;
+		private Editing<Contact> editingContact;
 		private Model model;
 		// FXMl items declarations :
 
@@ -79,7 +80,7 @@ public class Controller {
 
 	    private HashMap<String, Control> controls;
 		public Controller(){
-			this.editingContact = new Contact();
+			this.editingContact = new Editing<Contact>(new Contact());
 			this.model = new Model();
 			this.controls = new HashMap<>();
 			initData();
@@ -105,13 +106,17 @@ public class Controller {
 		public void initialize() {
 			initNodesMapping();
 
+
+
 			country.setItems(countriesData);
 
 
 
 			save.setOnAction((event) -> {
-				if(editingContact.isValid())
+				if(editingContact.isValid()){
 					System.out.println("Les donn�es sont valides et pr�tes � �tre enregistr�es.");
+
+				}
 				else{
 					for(Validator<?> validator : editingContact.getValidators()){
 						if(!validator.isValid()){
@@ -122,33 +127,33 @@ public class Controller {
 			});
 
 			debug.setOnAction((event) -> {
-				editingContact.debug();
+				editingContact.getData().debug();
 			});
 
 			load.setOnAction((event) -> {
-				editingContact.load();
+				editingContact.getData().load();
 			});
 
             createTree();
 		}
 
 		public void initContactBindings(){
-			lastname.textProperty().bindBidirectional(editingContact.lastnameProperty());
-			firstname.textProperty().bindBidirectional(editingContact.firstnameProperty());
-			street.textProperty().bindBidirectional(editingContact.addressProperty().get().streetProperty());
-			postalCode.textProperty().bindBidirectional(editingContact.addressProperty().get().postalCodeProperty());
-			city.textProperty().bindBidirectional(editingContact.addressProperty().get().cityProperty());
-			country.valueProperty().bindBidirectional(editingContact.addressProperty().get().countryProperty()); // Not working ??
-			birthdate.valueProperty().bindBidirectional(editingContact.birthdateProperty());
+			lastname.textProperty().bindBidirectional(editingContact.getData().lastnameProperty());
+			firstname.textProperty().bindBidirectional(editingContact.getData().firstnameProperty());
+			street.textProperty().bindBidirectional(editingContact.getData().addressProperty().get().streetProperty());
+			postalCode.textProperty().bindBidirectional(editingContact.getData().addressProperty().get().postalCodeProperty());
+			city.textProperty().bindBidirectional(editingContact.getData().addressProperty().get().cityProperty());
+			country.valueProperty().bindBidirectional(editingContact.getData().addressProperty().get().countryProperty()); // Not working ??
+			birthdate.valueProperty().bindBidirectional(editingContact.getData().birthdateProperty());
 
 
 			genderRadioGroup.selectedToggleProperty().addListener(
 				(event, oldValue, newValue) -> {
-					editingContact.genderProperty().setValue(newValue.getUserData().toString());
+					editingContact.getData().genderProperty().setValue(newValue.getUserData().toString());
 				}
 			);
 
-			editingContact.genderProperty().addListener(
+			editingContact.getData().genderProperty().addListener(
 				(event, oldValue, newValue) -> {
 					if(newValue.equals("M"))
 						genderRadioGroup.selectToggle(genderM);
@@ -186,10 +191,24 @@ public class Controller {
 			node.setTooltip(tooltip);
 		}
 
-		public void creatNewGroup(){
+		public void createNewGroup(){
 			Group g = new Group();
 			g.nameProperty().set(Group.DEFAULT_GROUP_NAME);
-			model.groupsProperty().add(g);
+			model.addGroup(g);
+		}
+
+		public void removeGroup(Group g){
+			model.removeGroup(g);
+		}
+
+		public void createNewContact(){
+			editingContact.getData().reset();
+			editingContact.getData().groupProperty().set(getCurrentGroup());
+		}
+
+		public Group getCurrentGroup(){
+			Group g = new Group();
+			return g;
 		}
 
 }
