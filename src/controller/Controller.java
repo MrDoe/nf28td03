@@ -129,6 +129,7 @@ public class Controller {
 				editingContact.load();
 			});
 
+            createTree();
 		}
 
 		public void initContactBindings(){
@@ -160,8 +161,6 @@ public class Controller {
 			genderM.setUserData("M");
 
 			genderRadioGroup.selectToggle(genderF);
-
-            createTree();
         }
 
         public void createTree(Object... rootItems) {
