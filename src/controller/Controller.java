@@ -16,10 +16,12 @@ import javafx.scene.control.Tooltip;
 import model.Contact;
 import model.Country;
 import model.Group;
+import model.Model;
 import validation.Validator;
 
 public class Controller {
-		private Contact model;
+		private Contact editingContact;
+		private Model model;
 		// FXMl items declarations :
 
 	    @FXML
@@ -48,8 +50,11 @@ public class Controller {
 	    private Button save;
 
 	    @FXML
-	    private ChoiceBox<Group> groups;
-		private ObservableList<Group> groupsData = FXCollections.observableArrayList();
+	    private Button addItem;
+
+	    @FXML
+	    private Button removeItem;
+
 
 	    @FXML
 	    private RadioButton genderF;
@@ -69,7 +74,8 @@ public class Controller {
 
 	    private HashMap<String, Control> controls;
 		public Controller(){
-			this.model = new Contact();
+			this.editingContact = new Contact();
+			this.model = new Model();
 			this.controls = new HashMap<>();
 			initData();
 		}
@@ -82,13 +88,10 @@ public class Controller {
 			this.controls.put("postalCode", postalCode);
 			this.controls.put("country", country);
 			this.controls.put("birthdate", birthdate);
-//			this.nodes.put("gender", genderRadioGroup);
-			this.controls.put("group", groups);
 
 		}
 
 		private void initData(){
-			groupsData.addAll(Group.getGroups());
 			countriesData.addAll(Country.getCountries());
 		}
 
@@ -98,25 +101,48 @@ public class Controller {
 			initNodesMapping();
 
 			country.setItems(countriesData);
-			groups.setItems(groupsData);
 
 
-			lastname.textProperty().bindBidirectional(model.lastnameProperty());
-			firstname.textProperty().bindBidirectional(model.firstnameProperty());
-			street.textProperty().bindBidirectional(model.addressProperty().get().streetProperty());
-			postalCode.textProperty().bindBidirectional(model.addressProperty().get().postalCodeProperty());
-			city.textProperty().bindBidirectional(model.addressProperty().get().cityProperty());
-			country.valueProperty().bindBidirectional(model.addressProperty().get().countryProperty()); // Not working ??
-			birthdate.valueProperty().bindBidirectional(model.birthdateProperty());
+
+			save.setOnAction((event) -> {
+				if(editingContact.isValid())
+					System.out.println("Les donn�es sont valides et pr�tes � �tre enregistr�es.");
+				else{
+					for(Validator<?> validator : editingContact.getValidators()){
+						if(!validator.isValid()){
+							setInvalid(controls.get(validator.getPropertyName()), validator.getMessages());
+						}
+					}
+				}
+			});
+
+			debug.setOnAction((event) -> {
+				editingContact.debug();
+			});
+
+			load.setOnAction((event) -> {
+				editingContact.load();
+			});
+
+		}
+
+		public void initContactBindings(){
+			lastname.textProperty().bindBidirectional(editingContact.lastnameProperty());
+			firstname.textProperty().bindBidirectional(editingContact.firstnameProperty());
+			street.textProperty().bindBidirectional(editingContact.addressProperty().get().streetProperty());
+			postalCode.textProperty().bindBidirectional(editingContact.addressProperty().get().postalCodeProperty());
+			city.textProperty().bindBidirectional(editingContact.addressProperty().get().cityProperty());
+			country.valueProperty().bindBidirectional(editingContact.addressProperty().get().countryProperty()); // Not working ??
+			birthdate.valueProperty().bindBidirectional(editingContact.birthdateProperty());
 
 
 			genderRadioGroup.selectedToggleProperty().addListener(
 				(event, oldValue, newValue) -> {
-					model.genderProperty().setValue(newValue.getUserData().toString());
+					editingContact.genderProperty().setValue(newValue.getUserData().toString());
 				}
 			);
 
-			model.genderProperty().addListener(
+			editingContact.genderProperty().addListener(
 				(event, oldValue, newValue) -> {
 					if(newValue.equals("M"))
 						genderRadioGroup.selectToggle(genderM);
@@ -129,28 +155,6 @@ public class Controller {
 			genderM.setUserData("M");
 
 			genderRadioGroup.selectToggle(genderF);
-
-			groups.valueProperty().bindBidirectional(model.groupProperty());
-
-			save.setOnAction((event) -> {
-				if(model.isValid())
-					System.out.println("Les donn�es sont valides et pr�tes � �tre enregistr�es.");
-				else{
-					for(Validator<?> validator : model.getValidators()){
-						if(!validator.isValid()){
-							setInvalid(controls.get(validator.getPropertyName()), validator.getMessages());
-						}
-					}
-				}
-			});
-
-			debug.setOnAction((event) -> {
-				model.debug();
-			});
-
-			load.setOnAction((event) -> {
-				model.load();
-			});
 
 		}
 
@@ -169,6 +173,12 @@ public class Controller {
 			}
 			tooltip.setText(tooltipMsg);
 			node.setTooltip(tooltip);
+		}
+
+		public void creatNewGroup(){
+			Group g = new Group();
+			g.nameProperty().set(Group.DEFAULT_GROUP_NAME);
+			model.groupsProperty().add(g);
 		}
 
 }
