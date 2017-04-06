@@ -1,10 +1,12 @@
 package controller;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import constraints.BirthdateConstraint;
 import constraints.NotEmptyStringConstraint;
+import constraints.NotNullConstraint;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -109,9 +111,23 @@ public class Controller {
 					editingContact.getData().firstnameProperty(), 
 					new NotEmptyStringConstraint()));
 			contactValidators.add(validatorFactory.createPropertyValidator(
+					editingContact.getData().lastnameProperty(), 
+					new NotEmptyStringConstraint()));
+			contactValidators.add(validatorFactory.createPropertyValidator(
 					editingContact.getData().birthdateProperty(),
 					new BirthdateConstraint()));			
-
+			contactValidators.add(validatorFactory.createPropertyValidator(
+					editingContact.getData().addressProperty().getValue().streetProperty(),
+					new NotEmptyStringConstraint()));
+			contactValidators.add(validatorFactory.createPropertyValidator(
+					editingContact.getData().addressProperty().getValue().cityProperty(),
+					new NotEmptyStringConstraint()));
+			contactValidators.add(validatorFactory.createPropertyValidator(
+					editingContact.getData().addressProperty().getValue().postalCodeProperty(),
+					new NotEmptyStringConstraint()));
+			contactValidators.add(validatorFactory.createPropertyValidator(
+					editingContact.getData().addressProperty().getValue().countryProperty(),
+					new NotNullConstraint()));			
 			editingContact.addValidators(contactValidators);
 		}
 
@@ -203,11 +219,11 @@ public class Controller {
 			node.setStyle("-fx-border-color: red;");
 		}
 
-		public void setInvalid(Control node, ArrayList<String> messages){
+		public void setInvalid(Control node, Collection<String> collection){
 			setInvalid(node);
 			Tooltip tooltip = new Tooltip();
 			String tooltipMsg = "";
-			for (String message : messages) {
+			for (String message : collection) {
 				tooltipMsg += message+"\n";
 			}
 			tooltip.setText(tooltipMsg);

@@ -12,10 +12,10 @@ public class Address {
 	private ObjectProperty<Country> country;
 	
 	public Address(){
-		street = new SimpleStringProperty();
-		postalCode = new SimpleStringProperty();
-		city = new SimpleStringProperty();
-		country = new SimpleObjectProperty<Country>(new Country());
+		street = new SimpleStringProperty(null, "street");
+		postalCode = new SimpleStringProperty(null, "postalCode");
+		city = new SimpleStringProperty(null, "city");
+		country = new SimpleObjectProperty<Country>(null, "country");
 	}
 	
 	public StringProperty streetProperty(){

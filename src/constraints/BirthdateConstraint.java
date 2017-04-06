@@ -6,10 +6,7 @@ import java.time.LocalDate;
 public class BirthdateConstraint extends DateConstraint {
 	public final static String INCONSISTENT_BIRTHDATE = "Vous ne pouvez pas �tre n� apr�s aujourd'hui.";
 	public final static String EMPTY_BIRTHDATE = "Vous devez renseigner une date de naissance.";
-	public BirthdateConstraint() {
-		super();
-	}
-
+	
 	@Override
 	public boolean validate() {
 		boolean validFlag = true;

@@ -8,9 +8,6 @@ public abstract class AbstractConstraint<T> {
 	AbstractConstraint(){
 		
 	}
-//	public AbstractConstraint(T value){
-//		setObject(value);
-//	}
 	public void setObject(T value){
 		if(value == null)
 			throw new NullPointerException("Validator must be initialized with an instanciated object.");

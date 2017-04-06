@@ -23,8 +23,8 @@ public class Contact implements Editable{
 		address = new SimpleObjectProperty<Address>(null, "address", new Address());
 		birthdate = new SimpleObjectProperty<LocalDate>(null, "birthdate");
 		gender = new SimpleStringProperty(null, "gender");
-		group = new SimpleObjectProperty<Group>(null,"group",new Group());
-
+		group = new SimpleObjectProperty<Group>(null,"group");
+		
 //		validators.put(firstname, new ArrayList<>());
 //		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
 //		validators.put(lastname, new ArrayList<>());

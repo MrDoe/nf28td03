@@ -3,7 +3,9 @@ package validation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Editing<T extends Editable> {
+import validation.Editable;
+
+public class Editing<T extends Editable> implements Validable {
 	private T object;
 	private ArrayList<Validator<?>> validators;
 	public Editing(T object){
@@ -11,8 +13,6 @@ public class Editing<T extends Editable> {
 			throw new NullPointerException();
 		this.object = object;
 		validators = new ArrayList<>();
-
-
 	}
 
 	public T getData(){
@@ -30,7 +30,7 @@ public class Editing<T extends Editable> {
 		return isValid;
 	}
 
-	public ArrayList<Validator<?>> getValidators(){
+	public Collection<Validator<?>> getValidators(){
 		return this.validators;
 	}
 	

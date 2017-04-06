@@ -2,10 +2,6 @@ package constraints;
 
 
 public class NotEmptyStringConstraint extends StringConstraint {
-	public NotEmptyStringConstraint() {
-		super();
-	}
-
 	public final static String EMPTY_STRING = "Cette valeur doit �tre renseign�e.";
 
 	@Override

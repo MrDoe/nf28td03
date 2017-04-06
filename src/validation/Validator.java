@@ -1,6 +1,7 @@
 package validation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import constraints.AbstractConstraint;
 
@@ -27,12 +28,25 @@ public class Validator<T> {
 	
 	public void addConstraint(AbstractConstraint<T> constraint){
 		if(constraint == null)
-			throw new NullPointerException();
+			throw new NullPointerException("Constraint cannot be null.");
 		constraint.setObject(property);
 		
 		constraints.add(constraint);
 	}
-	
+
+	public void addConstraint(Collection<AbstractConstraint<T>> constraintCollection){
+		if(constraintCollection == null)
+			throw new NullPointerException("Constraints list cannot be null.");
+		for (AbstractConstraint<T> constraint : constraintCollection) {
+			if(constraint != null){
+				constraint.setObject(property);
+				if(!constraints.contains(constraint))
+					constraints.add(constraint);				
+			}
+		}
+		
+	}
+
 	public boolean validate(){
 		boolean isValid = true;
 		for (AbstractConstraint<T> constraint : constraints) {
@@ -45,7 +59,7 @@ public class Validator<T> {
 		return isValid;
 	}
 	
-	public ArrayList<String> getMessages(){
+	public Collection<String> getMessages(){
 		ArrayList<String> messages = new ArrayList<>();
 		for (AbstractConstraint<T> constraint : constraints) {
 			messages.add(constraint.getMessage());
