@@ -2,10 +2,9 @@ package constraints;
 
 import java.time.LocalDate;
 
-import javafx.beans.property.ObjectProperty;
 
 public class BirthdateConstraint extends DateConstraint {
-	public final static String INCONSISTENT_BIRTHDATE = "Vous ne pouvez pas être né après aujourd'hui.";
+	public final static String INCONSISTENT_BIRTHDATE = "Vous ne pouvez pas ï¿½tre nï¿½ aprï¿½s aujourd'hui.";
 	public final static String EMPTY_BIRTHDATE = "Vous devez renseigner une date de naissance.";
 	public BirthdateConstraint() {
 		super();

@@ -1,13 +1,12 @@
 package constraints;
 
-import javafx.beans.property.StringProperty;
 
 public class NotEmptyStringConstraint extends StringConstraint {
 	public NotEmptyStringConstraint() {
 		super();
 	}
 
-	public final static String EMPTY_STRING = "Cette valeur doit être renseignée.";
+	public final static String EMPTY_STRING = "Cette valeur doit ï¿½tre renseignï¿½e.";
 
 	@Override
 	public boolean validate() {
