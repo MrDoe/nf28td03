@@ -13,6 +13,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import model.Contact;
 import model.Country;
 import model.Group;
@@ -71,6 +73,9 @@ public class Controller {
 
 	    @FXML
 	    private Button debug;
+
+	    @FXML
+	    private TreeView<Object> listeContacts;
 
 	    private HashMap<String, Control> controls;
 		public Controller(){
@@ -156,7 +161,14 @@ public class Controller {
 
 			genderRadioGroup.selectToggle(genderF);
 
-		}
+            createTree();
+        }
+
+        public void createTree(Object... rootItems) {
+
+			TreeItem<Object> root = new TreeItem<>("Fiche de contacts");
+			listeContacts.setRoot(root);
+        }
 
 		public void setInvalid(Control node){
 			if(node == null)

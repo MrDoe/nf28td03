@@ -18,7 +18,7 @@ public class TD03Application extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("resources/TD03.fxml"));
 //		Controller controller = new Controller(root);
 
-		Scene scene = new Scene(root, 605, 526);
+		Scene scene = new Scene(root, 772, 430);
 
 		stage.setTitle("FXML Welcome");
 		stage.setScene(scene);
