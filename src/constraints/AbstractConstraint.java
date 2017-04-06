@@ -5,7 +5,7 @@ public abstract class AbstractConstraint<T> {
 	private String message;
 	protected T value;
 	
-	public AbstractConstraint(){
+	AbstractConstraint(){
 		
 	}
 //	public AbstractConstraint(T value){

@@ -1,12 +1,8 @@
 package model;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 
-import constraints.BirthdateConstraint;
-import constraints.NotEmptyStringConstraint;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
 import validation.Validator;
 
 public class Editing<T extends Editable> {
@@ -19,13 +15,6 @@ public class Editing<T extends Editable> {
 		validators = new ArrayList<>();
 
 
-//		Validator<StringProperty> vFirstName = new Validator<>(firstname.getName(), firstname);
-//		vFirstName.addConstraint(new NotEmptyStringConstraint());
-//		validators.add(vFirstName);
-//
-//		Validator<ObjectProperty<LocalDate>> vBirthDate = new Validator<>(birthdate.getName(), birthdate);
-//		vBirthDate.addConstraint(new BirthdateConstraint());
-//		validators.add(vBirthDate);
 	}
 
 	public T getData(){
@@ -45,5 +34,19 @@ public class Editing<T extends Editable> {
 
 	public ArrayList<Validator<?>> getValidators(){
 		return this.validators;
+	}
+	
+	public void addValidator(Validator<?> validator){
+		if(validator==null)
+			throw new NullPointerException("Validator cannot be null.");
+		validators.remove(validator);
+		validators.add(validator);
+	}
+	
+	public void addValidators(Collection<Validator<?>> validators){
+		if(validators == null)
+			throw new NullPointerException("Validators list cannot be null.");
+		this.validators.removeAll(validators);
+		this.validators.addAll(validators);
 	}
 }

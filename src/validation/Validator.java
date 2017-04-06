@@ -9,11 +9,13 @@ public class Validator<T> {
 	private String propertyName;
 	private T property;
 	private boolean isValid = true;
-	public Validator(String propertyName, T property) {
+	
+
+	Validator(String propertyName, T property) {
 		if(propertyName == null)
 			throw new NullPointerException();
 		if(property == null)
-			throw new NullPointerException();
+			throw new NullPointerException();		
 		this.property = property;
 		this.propertyName = propertyName;
 		this.constraints = new ArrayList<AbstractConstraint<T>>();
@@ -54,4 +56,17 @@ public class Validator<T> {
 	public boolean isValid() {
 		return isValid;
 	}
+		
+	@Override
+	public boolean equals(Object v){
+		if(v instanceof Validator<?>){
+			if(this.propertyName.equals(((Validator<?>) v).getPropertyName()))
+				return true;			
+		}
+		return false;
+	}
+
+//	public static <U extends Property<?>> Validator<U> createPropertyValidator(U property){
+//		return new Validator<>(property.getName(), property);
+//	}
 }

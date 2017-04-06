@@ -2,6 +2,8 @@ package controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import constraints.BirthdateConstraint;
+import constraints.NotEmptyStringConstraint;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,6 +22,8 @@ import model.Country;
 import model.Editing;
 import model.Group;
 import model.Model;
+import validation.PropertyValidatorFactory;
+//import validation.PropertyValidator;
 import validation.Validator;
 
 public class Controller {
@@ -94,7 +98,20 @@ public class Controller {
 			this.controls.put("postalCode", postalCode);
 			this.controls.put("country", country);
 			this.controls.put("birthdate", birthdate);
+		}
+		
+		private void initValidators(){
+			PropertyValidatorFactory validatorFactory = PropertyValidatorFactory.getInstance();
+			ArrayList<Validator<?>> contactValidators = new ArrayList<>();
+			
+			contactValidators.add(validatorFactory.createPropertyValidator(
+					editingContact.getData().firstnameProperty(), 
+					new NotEmptyStringConstraint()));
+			contactValidators.add(validatorFactory.createPropertyValidator(
+					editingContact.getData().birthdateProperty(),
+					new BirthdateConstraint()));			
 
+			editingContact.addValidators(contactValidators);
 		}
 
 		private void initData(){
@@ -105,13 +122,10 @@ public class Controller {
 		@FXML
 		public void initialize() {
 			initNodesMapping();
-
-
-
+			initValidators();
+			initContactBindings();
 			country.setItems(countriesData);
-
-
-
+			
 			save.setOnAction((event) -> {
 				if(editingContact.isValid()){
 					System.out.println("Les donn�es sont valides et pr�tes � �tre enregistr�es.");
@@ -143,7 +157,7 @@ public class Controller {
 			street.textProperty().bindBidirectional(editingContact.getData().addressProperty().get().streetProperty());
 			postalCode.textProperty().bindBidirectional(editingContact.getData().addressProperty().get().postalCodeProperty());
 			city.textProperty().bindBidirectional(editingContact.getData().addressProperty().get().cityProperty());
-			country.valueProperty().bindBidirectional(editingContact.getData().addressProperty().get().countryProperty()); // Not working ??
+			country.valueProperty().bindBidirectional(editingContact.getData().addressProperty().get().countryProperty());
 			birthdate.valueProperty().bindBidirectional(editingContact.getData().birthdateProperty());
 
 
