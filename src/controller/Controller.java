@@ -1,6 +1,7 @@
 package controller;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import constraints.BirthdateConstraint;
 import constraints.NotEmptyStringConstraint;
@@ -129,13 +130,16 @@ public class Controller {
 			save.setOnAction((event) -> {
 				if(editingContact.isValid()){
 					System.out.println("Les donn�es sont valides et pr�tes � �tre enregistr�es.");
-
+					for (Entry<String, Control> control : controls.entrySet()) {
+						setValid(control.getValue());;
+					}
 				}
 				else{
 					for(Validator<?> validator : editingContact.getValidators()){
-						if(!validator.isValid()){
-							setInvalid(controls.get(validator.getPropertyName()), validator.getMessages());
-						}
+						if(!validator.isValid())
+							setInvalid(controls.get(validator.getPropertyName()), validator.getMessages());						
+						else
+							setValid(controls.get(validator.getPropertyName()));
 					}
 				}
 			});
@@ -188,6 +192,11 @@ public class Controller {
 			listeContacts.setRoot(root);
         }
 
+		public void setValid(Control node){
+			if(node == null)
+				throw new NullPointerException();
+			node.setStyle("");
+		}
 		public void setInvalid(Control node){
 			if(node == null)
 				throw new NullPointerException();
