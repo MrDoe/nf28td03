@@ -8,9 +8,12 @@ import java.util.Map.Entry;
 import constraints.BirthdateConstraint;
 import constraints.NotEmptyStringConstraint;
 import constraints.NotNullConstraint;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -27,6 +30,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -42,6 +46,8 @@ import validation.Validator;
 
 public class Controller {
 		private Editing<Contact> editingContact;
+		private Contact originalContact = null;
+		private TreeItem<Object> originalContactItem = null;
 		private Model model;
 
 	    private HashMap<String, Control> controls;
@@ -179,9 +185,23 @@ public class Controller {
 					for (Entry<String, Control> control : controls.entrySet()) {
 						setValid(control.getValue());
 					}
-					Contact newContact = new Contact(editingContact.getData());
-					getCurrentGroup().addContact(newContact);
-					editingContact.getData().reset();
+					System.out.println(originalContact);
+					if(originalContact != null){
+						try {
+							originalContact.load(editingContact.getData());
+						    TreeModificationEvent<Object> event1 = new TreeModificationEvent<>(TreeItem.valueChangedEvent(), originalContactItem);
+						    Event.fireEvent(originalContactItem, event1);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						originalContact = null;
+						originalContactItem = null;
+				} else {
+						Contact newContact = new Contact(editingContact.getData());
+						getCurrentGroup().addContact(newContact);						
+					}
+					editPanel.setVisible(false);
 				}
 				else{
 					for(Validator<?> validator : editingContact.getValidators()){
@@ -220,10 +240,15 @@ public class Controller {
 			});
 
 			removeItem.setOnAction((event) -> {
-				if(listeContacts.getSelectionModel().getSelectedItem() != null){
-					if(listeContacts.getSelectionModel().getSelectedItem().getValue() instanceof Group){
-						model.removeGroup((Group) listeContacts.getSelectionModel().getSelectedItem().getValue());
-//						listeContacts.getRoot().getChildren().remove(listeContacts.getSelectionModel().getSelectedItem());
+				MultipleSelectionModel<TreeItem<Object>> selectionModel = listeContacts.getSelectionModel(); 
+				if(selectionModel.getSelectedItem() != null){
+					if(selectionModel.getSelectedItem().getValue() instanceof Group){
+						model.removeGroup((Group) selectionModel.getSelectedItem().getValue());
+					}
+					if(selectionModel.getSelectedItem().getValue() instanceof Contact){
+						Contact toRemove = (Contact) selectionModel.getSelectedItem().getValue();
+						toRemove.groupProperty().getValue().removeContact(toRemove);
+						
 					}
 				}
 			});
@@ -248,6 +273,26 @@ public class Controller {
 								selectedItem.getChildren().add(contactItem);
 							}							
 						}
+						if(c.wasRemoved()){
+							List<? extends Contact> contactList = c.getRemoved();
+							for (Contact contact : contactList) {
+								TreeItem<Object> itemToRemove = null;
+								for(TreeItem<Object> groupItem : listeContacts.getRoot().getChildren()){
+									Group tmpGroup = (Group) groupItem.getValue(); 
+									if((tmpGroup).equals(contact.groupProperty().getValue())){
+										for (TreeItem<Object> contactItem : groupItem.getChildren()) {
+											if(contactItem.getValue().equals(contact))
+												itemToRemove = contactItem;
+										}
+										if(itemToRemove != null){
+											groupItem.getChildren().remove(itemToRemove);
+										}
+										
+									}
+									
+								}
+							}
+						}
 					}
 				}
 			};
@@ -269,7 +314,6 @@ public class Controller {
 							}
 						}
 						if(c.wasRemoved()){
-							// dont know what to do here....
 							List<? extends Group> groupList = c.getRemoved();
 							for (Group group : groupList) {
 								TreeItem<Object> itemToRemove = null;
@@ -288,6 +332,26 @@ public class Controller {
 				}
 			};
 			model.groupsProperty().addListener(listenerGroupList);
+			
+			
+			ChangeListener<TreeItem<Object>> treeListener = new ChangeListener<TreeItem<Object>>() {
+				
+				@Override
+				public void changed(ObservableValue<? extends TreeItem<Object>> observable, TreeItem<Object> oldValue, TreeItem<Object> newValue) {
+					if(!(newValue.getValue() instanceof Contact)){
+						editPanel.setVisible(false);
+						originalContact = null;
+						originalContactItem = null;
+						return;
+					}
+					originalContact = (Contact) newValue.getValue();
+					originalContactItem = newValue;
+					editingContact.load(originalContact);
+					editPanel.setVisible(true);
+				}
+			};
+			listeContacts.getSelectionModel().selectedItemProperty().addListener(treeListener);
+			
 		}
 		
 		public void initContactBindings(){
@@ -366,6 +430,7 @@ public class Controller {
 		}
 
 		public void createNewContact(){
+			editingContact.getData().reset();
 			editingContact.getData().groupProperty().set(getCurrentGroup());
 		}
 

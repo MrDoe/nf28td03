@@ -111,9 +111,9 @@ public class Contact implements Editable{
 		gender.set("M");
 
 		// Groupes ??
-		Group g = new Group();
-		g.nameProperty().set("Groupe 1");
-		group.set(g);
+//		Group g = new Group();
+//		g.nameProperty().set("Groupe 1");
+//		group.set(g);
 	}
 
 	@Override
@@ -132,6 +132,23 @@ public class Contact implements Editable{
 	
 	public String toString(){
 		return firstname.getValueSafe()+" "+lastname.getValueSafe();
+	}
+
+	@Override
+	public void load(Editable object) throws Exception {
+		if(!(object instanceof Contact))
+			throw new Exception("Must have a Contact instance to perform loading of this Editable.");
+		reset();
+		Contact from = (Contact) object;
+		lastname.setValue(from.lastname.getValue());
+		firstname.setValue(from.firstname.getValue());
+		address.getValue().streetProperty().setValue(from.address.getValue().streetProperty().getValue());
+		address.getValue().cityProperty().setValue(from.address.getValue().cityProperty().getValue());
+		address.getValue().postalCodeProperty().setValue(from.address.getValue().postalCodeProperty().getValue());
+		address.getValue().countryProperty().setValue(from.address.getValue().countryProperty().getValue());
+		birthdate.setValue(from.birthdate.getValue());
+		gender.setValue(from.gender.getValue());
+		group.setValue(from.group.getValue());
 	}
 
 }

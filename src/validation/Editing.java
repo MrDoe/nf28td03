@@ -19,6 +19,15 @@ public class Editing<T extends Editable> implements Validable {
 		return this.object;
 	}
 	
+	public void load(T object){
+		try {
+			this.object.load(object);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public boolean isValid(){
 		boolean isValid = true;
 		for(Validator<?> validator : validators){
