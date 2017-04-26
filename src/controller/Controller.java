@@ -26,7 +26,6 @@ import model.Group;
 import model.Model;
 import validation.Editing;
 import validation.PropertyValidatorFactory;
-//import validation.PropertyValidator;
 import validation.Validator;
 
 public class Controller {
@@ -115,7 +114,7 @@ public class Controller {
 					new NotEmptyStringConstraint()));
 			contactValidators.add(validatorFactory.createPropertyValidator(
 					editingContact.getData().birthdateProperty(),
-					new BirthdateConstraint()));			
+					new BirthdateConstraint()));
 			contactValidators.add(validatorFactory.createPropertyValidator(
 					editingContact.getData().addressProperty().getValue().streetProperty(),
 					new NotEmptyStringConstraint()));
@@ -147,7 +146,7 @@ public class Controller {
 				if(editingContact.isValid()){
 					System.out.println("Les donn�es sont valides et pr�tes � �tre enregistr�es.");
 					for (Entry<String, Control> control : controls.entrySet()) {
-						setValid(control.getValue());;
+						setValid(control.getValue());
 					}
 				}
 				else{

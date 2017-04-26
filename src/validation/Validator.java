@@ -3,10 +3,10 @@ package validation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import constraints.AbstractConstraint;
+import constraints.Constraint;
 
 public class Validator<T> {
-	private ArrayList<AbstractConstraint<T>> constraints;
+	private ArrayList<Constraint<T>> constraints;
 	private String propertyName;
 	private T property;
 	private boolean isValid = true;
@@ -19,14 +19,14 @@ public class Validator<T> {
 			throw new NullPointerException();		
 		this.property = property;
 		this.propertyName = propertyName;
-		this.constraints = new ArrayList<AbstractConstraint<T>>();
+		this.constraints = new ArrayList<Constraint<T>>();
 	}
 	
 	public String getPropertyName(){
 		return this.propertyName;
 	}
 	
-	public void addConstraint(AbstractConstraint<T> constraint){
+	public void addConstraint(Constraint<T> constraint){
 		if(constraint == null)
 			throw new NullPointerException("Constraint cannot be null.");
 		constraint.setObject(property);
@@ -34,10 +34,10 @@ public class Validator<T> {
 		constraints.add(constraint);
 	}
 
-	public void addConstraint(Collection<AbstractConstraint<T>> constraintCollection){
+	public void addConstraint(Collection<Constraint<T>> constraintCollection){
 		if(constraintCollection == null)
 			throw new NullPointerException("Constraints list cannot be null.");
-		for (AbstractConstraint<T> constraint : constraintCollection) {
+		for (Constraint<T> constraint : constraintCollection) {
 			if(constraint != null){
 				constraint.setObject(property);
 				if(!constraints.contains(constraint))
@@ -49,7 +49,7 @@ public class Validator<T> {
 
 	public boolean validate(){
 		boolean isValid = true;
-		for (AbstractConstraint<T> constraint : constraints) {
+		for (Constraint<T> constraint : constraints) {
 			constraint.validate();
 			// Toggle valid
 			if(isValid && !constraint.isValid())
@@ -61,7 +61,7 @@ public class Validator<T> {
 	
 	public Collection<String> getMessages(){
 		ArrayList<String> messages = new ArrayList<>();
-		for (AbstractConstraint<T> constraint : constraints) {
+		for (Constraint<T> constraint : constraints) {
 			messages.add(constraint.getMessage());
 		}
 		return messages;

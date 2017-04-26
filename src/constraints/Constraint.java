@@ -1,12 +1,15 @@
 package constraints;
 
-public abstract class AbstractConstraint<T> {
+public abstract class Constraint<T> {
 	private boolean isValid = false;
 	private String message;
 	protected T value;
 	
-	AbstractConstraint(){
+	Constraint(){
 		
+	}
+	Constraint(String message){
+		this.message = message; 
 	}
 	public void setObject(T value){
 		if(value == null)
@@ -18,7 +21,8 @@ public abstract class AbstractConstraint<T> {
 	}
 
 	public void setMessage(String message) {
-		this.message = message;
+		if(message == null || message.isEmpty())
+			this.message = message;
 	}
 
 	public abstract boolean validate();

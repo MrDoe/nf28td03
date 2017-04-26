@@ -2,7 +2,7 @@ package constraints;
 
 import javafx.beans.property.ObjectProperty;
 
-public class NotNullConstraint extends AbstractConstraint<ObjectProperty<?>> {
+public class NotNullConstraint extends Constraint<ObjectProperty<?>> {
 	public final static String NULL_VALUE = "Cette valeur doit �tre renseign�e.";
 
 	@Override
