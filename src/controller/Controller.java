@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -32,25 +34,31 @@ public class Controller {
 		private Editing<Contact> editingContact;
 		private Model model;
 		// FXMl items declarations :
+		private ObservableList<Country> countriesData = FXCollections.observableArrayList();
+
+	    @FXML
+	    private Menu menu_fichier;
 
 	    @FXML
 	    private ChoiceBox<Country> country;
-		private ObservableList<Country> countriesData = FXCollections.observableArrayList();
+
+	    @FXML
+	    private Button removeItem;
 
 	    @FXML
 	    private TextField firstname;
 
 	    @FXML
+	    private MenuItem menu_fichier_load;
+
+	    @FXML
 	    private DatePicker birthdate;
 
 	    @FXML
-	    private RadioButton genderM;
+	    private Button debug;
 
 	    @FXML
 	    private TextField city;
-
-	    @FXML
-	    private TextField street;
 
 	    @FXML
 	    private TextField postalCode;
@@ -59,32 +67,33 @@ public class Controller {
 	    private Button save;
 
 	    @FXML
+	    private TextField lastname;
+
+	    @FXML
+	    private ToggleGroup genderRadioGroup;
+
+	    @FXML
 	    private Button addItem;
 
 	    @FXML
-	    private Button removeItem;
-
-
-	    @FXML
-	    private RadioButton genderF;
-
-	    @FXML
-	    private TextField lastname;
+	    private RadioButton genderM;
 
 	    @FXML
 	    private Button load;
 
 	    @FXML
-	    private ToggleGroup genderRadioGroup;
-
-
-	    @FXML
-	    private Button debug;
-
-	    @FXML
 	    private TreeView<Object> listeContacts;
 
+	    @FXML
+	    private TextField street;
+
+	    @FXML
+	    private MenuItem menu_fichier_save;
+
+	    @FXML
+	    private RadioButton genderF;
 	    private HashMap<String, Control> controls;
+	    
 		public Controller(){
 			this.editingContact = new Editing<Contact>(new Contact());
 			this.model = new Model();
@@ -140,6 +149,7 @@ public class Controller {
 			initNodesMapping();
 			initValidators();
 			initContactBindings();
+			
 			country.setItems(countriesData);
 			
 			save.setOnAction((event) -> {
