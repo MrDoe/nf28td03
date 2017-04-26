@@ -6,30 +6,42 @@
 <?import javafx.scene.layout.*?>
 
 
-<Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
+<VBox spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+      <MenuBar>
+        <menus>
+          <Menu fx:id="menu_fichier" mnemonicParsing="false" text="Fichier">
+            <items>
+              <MenuItem fx:id="menu_fichier_load" mnemonicParsing="false" text="Charger un fichier" />
+                  <MenuItem fx:id="menu_fichier_save" mnemonicParsing="false" text="Sauvegarder dans un fichier" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <HBox fillHeight="false" spacing="5.0">
          <children>
-            <MenuBar prefHeight="25.0" prefWidth="772.0">
-              <menus>
-                <Menu fx:id="menu_fichier" mnemonicParsing="false" text="Fichier">
-                  <items>
-                    <MenuItem fx:id="menu_fichier_load" mnemonicParsing="false" text="Charger un fichier" />
-                        <MenuItem fx:id="menu_fichier_save" mnemonicParsing="false" text="Sauvegarder dans un fichier" />
-                  </items>
-                </Menu>
-              </menus>
-               <VBox.margin>
-                  <Insets bottom="5.0" />
-               </VBox.margin>
-            </MenuBar>
-            <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+            <VBox>
+               <children>
+                  <TreeView fx:id="listeContacts" editable="true" maxHeight="-Infinity" prefHeight="400.0" prefWidth="206.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TreeView>
+                  <HBox prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <Button fx:id="addItem" mnemonicParsing="false" text="+" />
+                        <Button fx:id="removeItem" mnemonicParsing="false" text="-" />
+                        <Button fx:id="tree_debug" mnemonicParsing="false" text="Debug" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+            <GridPane fx:id="editPanel">
               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="225.0" minWidth="10.0" prefWidth="13.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="0.0" prefWidth="212.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="225.0" minWidth="10.0" prefWidth="17.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="682.0" minWidth="10.0" prefWidth="531.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="0.0" prefWidth="13.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="118.0" vgrow="SOMETIMES" />
@@ -38,7 +50,7 @@
                   <RowConstraints maxHeight="258.0" minHeight="0.0" prefHeight="35.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="326.0" text="Nom et prénom" GridPane.columnIndex="3">
+                  <TitledPane animated="false" collapsible="false" text="Nom et prénom">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -53,10 +65,10 @@
                         </AnchorPane>
                     </content>
                      <GridPane.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </TitledPane>
-                  <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="139.0" prefWidth="478.0" text="Adresse" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                  <TitledPane animated="false" collapsible="false" text="Adresse" GridPane.rowIndex="1">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="113.0" prefWidth="521.0">
                            <children>
@@ -102,10 +114,10 @@
                         </AnchorPane>
                     </content>
                      <GridPane.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </TitledPane>
-                  <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="94.0" prefWidth="542.0" text="Données personelles" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                  <TitledPane collapsible="false" text="Données personelles" GridPane.rowIndex="2">
                      <content>
                         <GridPane>
                           <columnConstraints>
@@ -130,32 +142,21 @@
                         </GridPane>
                      </content>
                      <GridPane.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </TitledPane>
-                  <Button fx:id="save" mnemonicParsing="false" text="Sauvegarder" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <Button fx:id="load" mnemonicParsing="false" text="Load" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                  <Button fx:id="debug" mnemonicParsing="false" text="Debug" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                  <TreeView fx:id="listeContacts" maxHeight="-Infinity" prefHeight="447.0" prefWidth="225.0" GridPane.columnIndex="1" GridPane.rowSpan="3" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
-                     <GridPane.margin>
-                        <Insets bottom="2.0" top="2.0" />
-                     </GridPane.margin>
-                  </TreeView>
-                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <children>
-                        <Button fx:id="addItem" mnemonicParsing="false" text="+" />
-                        <Button fx:id="removeItem" mnemonicParsing="false" text="-" />
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </HBox>
+                  <Button fx:id="save" mnemonicParsing="false" text="Sauvegarder" GridPane.rowIndex="3" />
+                  <Button fx:id="load" mnemonicParsing="false" text="Load" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                  <Button fx:id="debug" mnemonicParsing="false" text="Debug" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
             </GridPane>
          </children>
-      </VBox>
+         <padding>
+            <Insets top="5.0" />
+         </padding>
+      </HBox>
    </children>
-</Pane>
+   <padding>
+      <Insets top="5.0" />
+   </padding>
+</VBox>

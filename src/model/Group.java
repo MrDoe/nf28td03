@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Group {
@@ -14,7 +15,7 @@ public class Group {
 	public final static String DEFAULT_GROUP_NAME = "Nouveau Groupe";
 	public Group(){
 		this.name = new SimpleStringProperty();
-		this.contacts = new SimpleListProperty<Contact>();
+		this.contacts = FXCollections.observableArrayList();
 	}
 
 	public ObservableList<Contact> contactsProperty(){

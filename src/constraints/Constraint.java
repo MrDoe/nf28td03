@@ -21,7 +21,7 @@ public abstract class Constraint<T> {
 	}
 
 	public void setMessage(String message) {
-		if(message == null || message.isEmpty())
+		if(this.message == null || this.message.isEmpty())
 			this.message = message;
 	}
 

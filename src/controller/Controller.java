@@ -2,13 +2,16 @@ package controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import constraints.BirthdateConstraint;
 import constraints.NotEmptyStringConstraint;
 import constraints.NotNullConstraint;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -16,12 +19,19 @@ import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
 import model.Contact;
 import model.Country;
 import model.Group;
@@ -33,8 +43,13 @@ import validation.Validator;
 public class Controller {
 		private Editing<Contact> editingContact;
 		private Model model;
-		// FXMl items declarations :
-		private ObservableList<Country> countriesData = FXCollections.observableArrayList();
+
+	    private HashMap<String, Control> controls;
+	    private String groupIcon = "resources/group.png";
+	    private String contactIcon = "resources/contact.png";
+	    private ObservableList<Country> countriesData = FXCollections.observableArrayList();
+	    private TreeItem<Object> selectedItem;
+	    // FXMl items declarations :
 
 	    @FXML
 	    private Menu menu_fichier;
@@ -92,7 +107,12 @@ public class Controller {
 
 	    @FXML
 	    private RadioButton genderF;
-	    private HashMap<String, Control> controls;
+
+	    @FXML
+	    private Button tree_debug;
+
+	    @FXML
+	    private GridPane editPanel;
 	    
 		public Controller(){
 			this.editingContact = new Editing<Contact>(new Contact());
@@ -150,14 +170,18 @@ public class Controller {
 			initValidators();
 			initContactBindings();
 			
+			editPanel.setVisible(false);
+			
 			country.setItems(countriesData);
 			
 			save.setOnAction((event) -> {
 				if(editingContact.isValid()){
-					System.out.println("Les donn�es sont valides et pr�tes � �tre enregistr�es.");
 					for (Entry<String, Control> control : controls.entrySet()) {
 						setValid(control.getValue());
 					}
+					Contact newContact = new Contact(editingContact.getData());
+					getCurrentGroup().addContact(newContact);
+					editingContact.getData().reset();
 				}
 				else{
 					for(Validator<?> validator : editingContact.getValidators()){
@@ -177,9 +201,95 @@ public class Controller {
 				editingContact.getData().load();
 			});
 
-            createTree();
-		}
+			tree_debug.setOnAction((event) -> {
+				model.debug();
+			});
 
+			addItem.setOnAction((event) -> {
+				MultipleSelectionModel<TreeItem<Object>> selectionModel = listeContacts.getSelectionModel(); 
+				if(selectionModel.getSelectedItem() != null){
+					if(selectionModel.getSelectedItem().equals(listeContacts.getRoot())){
+						createNewGroup();
+					}
+					if(selectionModel.getSelectedItem().getValue() instanceof Group){
+						selectedItem = selectionModel.getSelectedItem();
+						editPanel.setVisible(true);
+						createNewContact();
+					}
+				}
+			});
+
+			removeItem.setOnAction((event) -> {
+				if(listeContacts.getSelectionModel().getSelectedItem() != null){
+					if(listeContacts.getSelectionModel().getSelectedItem().getValue() instanceof Group){
+						model.removeGroup((Group) listeContacts.getSelectionModel().getSelectedItem().getValue());
+//						listeContacts.getRoot().getChildren().remove(listeContacts.getSelectionModel().getSelectedItem());
+					}
+				}
+			});
+			
+			
+            createTree();
+            initTreeBindings();
+		}
+		
+		public void initTreeBindings(){
+			listeContacts.getRoot().setValue(model);
+			ListChangeListener<Contact> listenerContactList = new ListChangeListener<Contact>() {
+				
+				@Override
+				public void onChanged(Change<? extends Contact> c) {
+					System.out.println("list contact changed");
+					while(c.next()){
+						if(c.wasAdded()){
+							List<? extends Contact> contactList = c.getAddedSubList();
+							for (Contact contact : contactList) {
+								TreeItem<Object> contactItem = new TreeItem<Object>(contact, new ImageView(contactIcon));
+								selectedItem.getChildren().add(contactItem);
+							}							
+						}
+					}
+				}
+			};
+			
+			
+			
+			ListChangeListener<Group> listenerGroupList = new ListChangeListener<Group>() {
+				
+				@Override
+				public void onChanged(Change<? extends Group> c) {
+					while(c.next()){
+						if(c.wasAdded()){
+							List<? extends Group> groupList = c.getAddedSubList();
+							for (Group group : groupList) {
+								TreeItem<Object> grpItem = new TreeItem<Object>(group, new ImageView(groupIcon));
+								listeContacts.getRoot().getChildren().add(grpItem);
+								grpItem.setExpanded(true);
+								group.contactsProperty().addListener(listenerContactList);
+							}
+						}
+						if(c.wasRemoved()){
+							// dont know what to do here....
+							List<? extends Group> groupList = c.getRemoved();
+							for (Group group : groupList) {
+								TreeItem<Object> itemToRemove = null;
+								for(TreeItem<Object> groupItem : listeContacts.getRoot().getChildren()){
+									if(((Group) groupItem.getValue()).equals(group))
+										itemToRemove = groupItem;
+								}
+								if(itemToRemove != null){
+									listeContacts.getRoot().getChildren().remove(itemToRemove);
+								}
+							}
+						}
+						
+					}
+					
+				}
+			};
+			model.groupsProperty().addListener(listenerGroupList);
+		}
+		
 		public void initContactBindings(){
 			lastname.textProperty().bindBidirectional(editingContact.getData().lastnameProperty());
 			firstname.textProperty().bindBidirectional(editingContact.getData().firstnameProperty());
@@ -198,7 +308,9 @@ public class Controller {
 
 			editingContact.getData().genderProperty().addListener(
 				(event, oldValue, newValue) -> {
-					if(newValue.equals("M"))
+					if(newValue == null)
+						genderRadioGroup.selectToggle(genderF);
+					else if(newValue.equals("M"))
 						genderRadioGroup.selectToggle(genderM);
 					else
 						genderRadioGroup.selectToggle(genderF);
@@ -215,12 +327,16 @@ public class Controller {
 
 			TreeItem<Object> root = new TreeItem<>("Fiche de contacts");
 			listeContacts.setRoot(root);
+			listeContacts.getRoot().setExpanded(true);
+			listeContacts.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+			listeContacts.setCellFactory(param -> new TextFieldTreeCellImpl());
         }
 
 		public void setValid(Control node){
 			if(node == null)
 				throw new NullPointerException();
 			node.setStyle("");
+			node.setTooltip(null);
 		}
 		public void setInvalid(Control node){
 			if(node == null)
@@ -250,13 +366,87 @@ public class Controller {
 		}
 
 		public void createNewContact(){
-			editingContact.getData().reset();
 			editingContact.getData().groupProperty().set(getCurrentGroup());
 		}
 
 		public Group getCurrentGroup(){
-			Group g = new Group();
-			return g;
+			if(selectedItem.getValue() instanceof Group)
+				return (Group) selectedItem.getValue();
+			return null; 
+				
 		}
 
-}
+	    private final class TextFieldTreeCellImpl extends TreeCell<Object> {
+	    	 
+	        private TextField textField;
+	 
+	        public TextFieldTreeCellImpl() {
+	        }
+	 
+	        @Override
+	        public void startEdit() {
+	            super.startEdit();
+	            if(!(getItem() instanceof Group)){
+	            	return;
+	            }
+	            if (textField == null) {
+	                createTextField();
+	            }
+	            setText(null);
+	            setGraphic(textField);
+	            textField.selectAll();
+	        }
+	 
+	        @Override
+	        public void cancelEdit() {
+	            super.cancelEdit();
+	            if(!(getItem() instanceof Group)){
+	            	return;
+	            }
+	            Group group = (Group) getItem();
+	            setText(group.toString());
+	            setGraphic(getTreeItem().getGraphic());
+	        }
+	 
+	        @Override
+	        public void updateItem(Object item, boolean empty) {
+	            super.updateItem(item, empty);
+	 
+	            if (empty) {
+	                setText(null);
+	                setGraphic(null);
+	            } else {
+	                if (isEditing()) {
+	                    if (textField != null) {
+	                        textField.setText(getString());
+	                    }
+	                    setText(null);
+	                    setGraphic(textField);
+	                } else {
+	                    setText(getString());
+	                    setGraphic(getTreeItem().getGraphic());
+	                }
+	            }
+	        }
+	 
+	        private void createTextField() {
+	            textField = new TextField(getString());
+	            textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+	 
+	                @Override
+	                public void handle(KeyEvent t) {
+	                    if (t.getCode() == KeyCode.ENTER) {
+	                        Group group = (Group) getItem();
+	                        group.nameProperty().setValue(textField.getText());
+	                        commitEdit(group);
+	                    } else if (t.getCode() == KeyCode.ESCAPE) {
+	                        cancelEdit();
+	                    }
+	                }
+	            });
+	        }
+	 
+	        private String getString() {
+	            return getItem() == null ? "" : getItem().toString();
+	        }
+	    }}

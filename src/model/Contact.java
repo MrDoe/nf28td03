@@ -17,6 +17,20 @@ public class Contact implements Editable{
 	private ObjectProperty<Group> group;
 
 
+	public Contact(Contact contact){
+		lastname = new SimpleStringProperty(null, "lastname", contact.lastname.getValue());
+		firstname = new SimpleStringProperty(null, "firstname", contact.firstname.getValue());
+		Address address = new Address();
+		address.streetProperty().setValue(contact.address.getValue().streetProperty().getValue());
+		address.cityProperty().setValue(contact.address.getValue().cityProperty().getValue());
+		address.postalCodeProperty().setValue(contact.address.getValue().postalCodeProperty().getValue());
+		address.countryProperty().setValue(contact.address.getValue().countryProperty().getValue());
+		this.address = new SimpleObjectProperty<Address>(null, "address", address);
+		birthdate = new SimpleObjectProperty<LocalDate>(null, "birthdate", contact.birthdate.getValue());
+		gender = new SimpleStringProperty(null, "gender", contact.gender.getValue());
+		group = new SimpleObjectProperty<Group>(null,"group", contact.group.getValue());
+	}
+	
 	public Contact(){
 		lastname = new SimpleStringProperty(null, "lastname");
 		firstname = new SimpleStringProperty(null, "firstname");
@@ -82,7 +96,7 @@ public class Contact implements Editable{
 		// sample data :
 		firstname.setValue("Nicolas");
 		lastname.setValue("Rigaud");
-		Address address = this.address.get();
+		Address address = this.address.getValue();
 		address.streetProperty().setValue("28 quater rue d'Amiens Apt 5C");
 		address.postalCodeProperty().setValue("60200");
 		address.cityProperty().setValue("Compi�gne");
@@ -104,8 +118,20 @@ public class Contact implements Editable{
 
 	@Override
 	public void reset() {
-		System.out.println("TODO : reset values");
-
+		firstname.setValue(null);
+		lastname.setValue(null);
+//		address.setValue(new Address());
+		address.getValue().streetProperty().setValue(null);
+		address.getValue().cityProperty().setValue(null);
+		address.getValue().postalCodeProperty().setValue(null);
+		address.getValue().countryProperty().setValue(null);
+		birthdate.setValue(null);
+		gender.setValue(null);
+		group.setValue(null);
+	}
+	
+	public String toString(){
+		return firstname.getValueSafe()+" "+lastname.getValueSafe();
 	}
 
 }

@@ -18,7 +18,7 @@ public class Editing<T extends Editable> implements Validable {
 	public T getData(){
 		return this.object;
 	}
-
+	
 	public boolean isValid(){
 		boolean isValid = true;
 		for(Validator<?> validator : validators){
