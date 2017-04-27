@@ -1,5 +1,9 @@
 package model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.time.LocalDate;
 
 import javafx.beans.property.ObjectProperty;
@@ -8,7 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import validation.Editable;
 
-public class Contact implements Editable{
+public class Contact implements Editable, Externalizable{
 	private StringProperty lastname;
 	private StringProperty firstname;
 	private ObjectProperty<Address> address;
@@ -37,21 +41,7 @@ public class Contact implements Editable{
 		address = new SimpleObjectProperty<Address>(null, "address", new Address());
 		birthdate = new SimpleObjectProperty<LocalDate>(null, "birthdate");
 		gender = new SimpleStringProperty(null, "gender");
-		group = new SimpleObjectProperty<Group>(null,"group");
-		
-//		validators.put(firstname, new ArrayList<>());
-//		validators.get(firstname).add(new NotEmptyStringConstraint(firstname));
-//		validators.put(lastname, new ArrayList<>());
-//		validators.get(lastname).add(new NotEmptyStringConstraint(lastname));
-//		validators.put(birthdate, new ArrayList<>());
-//		validators.get(birthdate).add(new BirthdateConstraint(birthdate));
-
-
-
-//		validators = new ArrayList<>();
-//		validators.add(new NotEmptyStringValidator(lastname));
-//		validators.add(new NotEmptyStringValidator(firstname));
-//		validators.add(new BirthdateValidator(birthdate));
+		group = new SimpleObjectProperty<Group>(null,"group");		
 	}
 
 	public StringProperty lastnameProperty(){
@@ -149,6 +139,26 @@ public class Contact implements Editable{
 		birthdate.setValue(from.birthdate.getValue());
 		gender.setValue(from.gender.getValue());
 		group.setValue(from.group.getValue());
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		lastname.set(in.readUTF());
+		firstname.set(in.readUTF());
+		address.set((Address) in.readObject());
+		birthdate.set((LocalDate) in.readObject());
+		gender.set(in.readUTF());
+//		group.set((Group) in.readObject());
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeUTF(lastname.get());
+		out.writeUTF(firstname.get());
+		out.writeObject(address.get());
+		out.writeObject(birthdate.get());
+		out.writeUTF(gender.get());
+//		out.writeObject(group.get());
 	}
 
 }

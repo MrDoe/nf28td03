@@ -1,12 +1,14 @@
 package model;
 
 
-import java.util.Iterator;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
-public class Model {
+public class Model implements Externalizable{
 	private ObservableList<Group> groups;
 
 	public Model() {
@@ -40,6 +42,23 @@ public class Model {
 				contact.debug();
 			}
 		}
+		
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		int nbGroups = in.readInt();
+		for(int i = 0; i < nbGroups; i++){
+			addGroup((Group) in.readObject());
+		}
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(groupsProperty().size());
+	    for(Group group : groups){
+	    	out.writeObject(group);
+	    }
 		
 	}
 

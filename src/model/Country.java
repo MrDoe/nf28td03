@@ -1,5 +1,9 @@
 package model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +13,7 @@ import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Country {
+public class Country implements Externalizable{
 	private StringProperty name;
 	
 	public Country(){
@@ -49,5 +53,17 @@ public class Country {
 				return true;
 		}		
 		return false;
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		name.set(in.readUTF());
+		
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeUTF(name.get());
+		
 	}
 }

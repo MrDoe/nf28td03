@@ -1,4 +1,10 @@
 package controller;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +42,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 import model.Contact;
 import model.Country;
 import model.Group;
@@ -232,9 +241,8 @@ public class Controller {
 						createNewGroup();
 					}
 					if(selectionModel.getSelectedItem().getValue() instanceof Group){
-						selectedItem = selectionModel.getSelectedItem();
 						editPanel.setVisible(true);
-						createNewContact();
+						createNewContact((Group) selectionModel.getSelectedItem().getValue());
 					}
 				}
 			});
@@ -253,6 +261,56 @@ public class Controller {
 				}
 			});
 			
+			menu_fichier_save.setOnAction((event) -> {
+				FileChooser fc = new FileChooser();
+				fc.setTitle("Sélection d'un fichier de sauvegarde...");
+				fc.getExtensionFilters().addAll(
+				         new ExtensionFilter("Out file", "*.out"));
+				Window window = editPanel.getScene().getWindow();
+				 File selectedFile = fc.showSaveDialog(window);
+				 if (selectedFile != null) {
+				    System.out.println("writing");
+				    try {
+						ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(selectedFile));
+						oos.writeInt(model.groupsProperty().size());
+					    for(Group group : model.groupsProperty()){
+					    	oos.writeObject(group);
+					    }
+					    oos.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				 }
+
+			});
+			
+			menu_fichier_load.setOnAction((event) -> {
+				FileChooser fc = new FileChooser();
+				fc.setTitle("Sélection d'un fichier de chargement...");
+				fc.getExtensionFilters().addAll(
+				         new ExtensionFilter("Out file", "*.out"));
+				Window window = editPanel.getScene().getWindow();
+				 File selectedFile = fc.showOpenDialog(window);
+				 if (selectedFile != null) {
+				    System.out.println("writing");
+				    try {
+						ObjectInputStream ois = new ObjectInputStream(new FileInputStream(selectedFile));
+						int nbGroups = ois.readInt();
+						for(int i = 0; i < nbGroups; i++){
+							model.addGroup((Group) ois.readObject());
+						}
+						ois.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				 }
+				
+			});
 			
             createTree();
             initTreeBindings();
@@ -270,7 +328,11 @@ public class Controller {
 							List<? extends Contact> contactList = c.getAddedSubList();
 							for (Contact contact : contactList) {
 								TreeItem<Object> contactItem = new TreeItem<Object>(contact, new ImageView(contactIcon));
-								selectedItem.getChildren().add(contactItem);
+								for(TreeItem<Object> groupItem : listeContacts.getRoot().getChildren()){
+									if(groupItem.getValue().equals(contact.groupProperty().getValue())){
+										groupItem.getChildren().add(contactItem);
+									}
+								}
 							}							
 						}
 						if(c.wasRemoved()){
@@ -289,7 +351,6 @@ public class Controller {
 										}
 										
 									}
-									
 								}
 							}
 						}
@@ -331,6 +392,7 @@ public class Controller {
 					
 				}
 			};
+			
 			model.groupsProperty().addListener(listenerGroupList);
 			
 			
@@ -429,9 +491,9 @@ public class Controller {
 			model.removeGroup(g);
 		}
 
-		public void createNewContact(){
+		public void createNewContact(Group group){
 			editingContact.getData().reset();
-			editingContact.getData().groupProperty().set(getCurrentGroup());
+			editingContact.getData().groupProperty().set(group);
 		}
 
 		public Group getCurrentGroup(){
